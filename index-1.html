@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yoyi Station | Senarai Lokasi</title>
+<style>
+:root{--green:#2e7547;--pale:#e8f3e9;--ink:#183323;--muted:#637568}
+*{box-sizing:border-box}body{margin:0;background:#f4f7f4;color:var(--ink);font:16px/1.45 Arial,sans-serif}
+header{background:var(--pale);text-align:center;padding:28px 16px 22px;border-bottom:1px solid #d4e4d6}
+h1{margin:0;color:var(--green);font-size:clamp(28px,6vw,42px)}header p{margin:8px 0 0}
+main{max-width:1000px;margin:auto;padding:18px}
+.tools{background:#fff;border:1px solid #dce7dd;border-radius:14px;padding:14px;margin-bottom:18px}
+.tools summary{font-weight:bold;color:var(--green);cursor:pointer}
+.tools p{color:var(--muted);font-size:14px}
+#grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.card{background:#fff;border:1px solid #dce7dd;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px #1833230a}
+.photo{height:180px;background:#e8eee9;display:flex;align-items:center;justify-content:center;color:#607568;font-weight:bold;overflow:hidden}
+.photo img{width:100%;height:100%;object-fit:cover}
+.content{padding:14px}.number{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green);font-weight:bold}
+h2{font-size:19px;margin:5px 0 8px}.address{color:#526357;white-space:pre-wrap;margin:0 0 12px;font-size:14px}
+.map{display:inline-block;background:var(--green);color:white;text-decoration:none;padding:9px 12px;border-radius:8px;font-weight:bold;font-size:14px}
+.empty{color:#68796d;font-size:14px}.edit{display:none;padding:12px;border-top:1px solid #e0e9e1;background:#f8fbf8}
+body.editing .edit{display:block}label{display:block;font-size:13px;font-weight:bold;margin:9px 0 4px}
+input,textarea{width:100%;padding:9px;border:1px solid #cbd8cd;border-radius:7px;font:inherit;font-size:14px;background:white}
+textarea{min-height:62px;resize:vertical}.edit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{border:0;border-radius:8px;padding:10px 12px;font-weight:bold;cursor:pointer;background:var(--green);color:white}
+button.secondary{background:#e4eee5;color:var(--ink)}.warning{font-size:13px;color:#7a5a1b}
+footer{text-align:center;padding:26px;color:var(--muted);font-size:13px}
+@media print{.tools,.edit,.map{display:none!important}body{background:#fff}#grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>YOYI STATION</h1>
+  <p><strong>J&amp;T Express Self Collection</strong></p>
+  <p>Pilih station untuk melihat alamat dan lokasi.</p>
+</header>
+<main>
+  <details class="tools" id="editor">
+    <summary>Mod sunting — tambah maklumat station</summary>
+    <p>Isi maklumat dan pautan gambar untuk setiap station. Perubahan disimpan pada pelayar/peranti ini sahaja. Untuk pelanggan melihat perubahan, halaman yang telah dikemas kini perlu diterbitkan semula di tempat hosting.</p>
+    <p class="warning">Petua gambar: gunakan pautan gambar yang boleh dibuka umum. Untuk Google Maps, tampal pautan perkongsian lokasi.</p>
+    <div class="edit-actions">
+      <button id="toggle">Buka mod sunting</button>
+      <button class="secondary" id="export">Muat turun data lokasi</button>
+      <button class="secondary" id="import">Import data lokasi</button>
+      <input id="importFile" type="file" accept=".json,application/json" hidden>
+    </div>
+  </details>
+  <section id="grid" aria-label="Senarai 19 Yoyi Station"></section>
+</main>
+<footer>Yoyi Station • Senarai lokasi self collection</footer>
+<script>
+const KEY='yoyi-station-locations-v1';
+const blank=()=>Array.from({length:19},(_,i)=>({name:`Yoyi Station ${i+1}`,address:'',image:'',map:''}));
+let data=blank();
+try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(saved)&&saved.length===19)data=saved;}catch(e){}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function render(){
+ const grid=document.getElementById('grid');
+ grid.innerHTML=data.map((x,i)=>`<article class="card">
+  <div class="photo">${x.image?`<img src="${esc(x.image)}" alt="Gambar ${esc(x.name||'Yoyi Station '+(i+1))}" onerror="this.parentElement.innerHTML='Gambar belum dapat dipaparkan'">`:'Slot gambar station '+(i+1)}</div>
+  <div class="content"><div class="number">Station ${i+1} daripada 19</div>
+  <h2>${esc(x.name||'Yoyi Station '+(i+1))}</h2>
+  <p class="address">${x.address?esc(x.address):'<span class="empty">Alamat akan ditambah kemudian.</span>'}</p>
+  ${x.map?`<a class="map" href="${esc(x.map)}" target="_blank" rel="noopener">Buka Google Maps ↗</a>`:'<span class="empty">Pautan Google Maps akan ditambah kemudian.</span>'}</div>
+  <div class="edit">
+  <label for="name${i}">Nama station</label><input id="name${i}" data-i="${i}" data-k="name" value="${esc(x.name)}" placeholder="Nama station">
+  <label for="address${i}">Alamat</label><textarea id="address${i}" data-i="${i}" data-k="address" placeholder="Alamat penuh">${esc(x.address)}</textarea>
+  <label for="image${i}">Pautan gambar (URL)</label><input id="image${i}" data-i="${i}" data-k="image" value="${esc(x.image)}" placeholder="https://...">
+  <label for="map${i}">Pautan Google Maps</label><input id="map${i}" data-i="${i}" data-k="map" value="${esc(x.map)}" placeholder="https://maps.app.goo.gl/...">
+  </div></article>`).join('');
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));}
+document.getElementById('toggle').addEventListener('click',()=>{document.body.classList.toggle('editing');document.getElementById('toggle').textContent=document.body.classList.contains('editing')?'Tutup mod sunting':'Buka mod sunting';});
+document.getElementById('grid').addEventListener('input',e=>{const el=e.target;if(el.dataset.i!==undefined){data[Number(el.dataset.i)][el.dataset.k]=el.value;save();const pos=el.selectionStart;render();document.body.classList.add('editing');const same=document.querySelector(`[data-i="${el.dataset.i}"][data-k="${el.dataset.k}"]`);if(same){same.focus();try{same.setSelectionRange(pos,pos)}catch(err){}}}});
+document.getElementById('export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='yoyi-station-locations.json';a.click();URL.revokeObjectURL(a.href);});
+document.getElementById('import').addEventListener('click',()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d)||d.length!==19)throw Error();data=d.map(x=>({name:x.name||'',address:x.address||'',image:x.image||'',map:x.map||''}));save();render();alert('Data lokasi berjaya dimuatkan pada peranti ini.');}catch(err){alert('Fail tidak sah. Pilih fail JSON data Yoyi Station.');}e.target.value='';});
+render();
+</script>
+</body>
+</html>
