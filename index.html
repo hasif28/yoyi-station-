@@ -52,9 +52,16 @@ footer{text-align:center;padding:26px;color:var(--muted);font-size:13px}
 </main>
 <footer>Yoyi Station • Senarai lokasi self collection</footer>
 <script>
-const KEY='yoyi-station-locations-v1';
-const blank=()=>Array.from({length:19},(_,i)=>({name:`Yoyi Station ${i+1}`,address:'',image:'',map:''}));
+const KEY='yoyi-station-locations-published-20261019';
+const blank=()=>Array.from({length:19},(_,i)=>({
+  name:`Yoyi Station ${i+1}`,address:'',image:'',map:''
+}));
 let data=blank();
+data[0]={
+  name:'Yoyi CDC Raub',
+  address:'No 17 pusat perdagangan raub',
+  image:'https://hasif28.github.io/yoyi-station-/IMG-20261011-WA0053.jpg',
+  map:'https://maps.app.goo.gl/xspQxHssYuFjfSqX6'};
 try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(saved)&&saved.length===19)data=saved;}catch(e){}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function render(){
