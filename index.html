@@ -50,9 +50,8 @@ footer{text-align:center;padding:26px;color:var(--muted);font-size:13px}
   </details>
   <section id="grid" aria-label="Senarai 19 Yoyi Station"></section>
 </main>
-<footer>Yoyi Station • Senarai lokasi self collection</footer>
-<script>
-const KEY='yoyi-station-locations-published-20261019';
+<footer>Yoyi Station • Senarai lokasi self collection</footer> <script> 
+const KEY='yoyi-station-locations-published-20261019-v2';
 const blank=()=>Array.from({length:19},(_,i)=>({
   name:`Yoyi Station ${i+1}`,address:'',image:'',map:''
 }));
@@ -61,7 +60,11 @@ data[0]={
   name:'Yoyi CDC Raub',
   address:'No 17 pusat perdagangan raub',
   image:'https://hasif28.github.io/yoyi-station-/IMG-20261011-WA0053.jpg',
-  map:'https://maps.app.goo.gl/xspQxHssYuFjfSqX6'};
+  map:'https://maps.app.goo.gl/xspQxHssYuFjfSqX6'};data[1]={
+  name:'Yoyi JNT Batu 3',
+  address:'No 11, Tkt Bawah, Jalan Lipis, Kawasan Perindustrian Yakin, 27400 Raub, Pahang',
+  image:'WhatsApp%20Image%202026-10-11%20at%2016.15.20%20(1).jpeg',
+  map:'https://maps.app.goo.gl/DH3tiVNKGEA2K9S78'};
 try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(saved)&&saved.length===19)data=saved;}catch(e){}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function render(){
