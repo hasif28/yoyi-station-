@@ -51,7 +51,7 @@ footer{text-align:center;padding:26px;color:var(--muted);font-size:13px}
   <section id="grid" aria-label="Senarai 19 Yoyi Station"></section>
 </main>
 <footer>Yoyi Station • Senarai lokasi self collection</footer> <script> 
-const KEY='yoyi-station-locations-published-20261020-v3';
+const KEY='yoyi-station-locations-published-20261020-v4';
 const blank=()=>Array.from({length:19},(_,i)=>({
   name:`Yoyi Station ${i+1}`,address:'',image:'',map:''
 }));
@@ -68,7 +68,11 @@ data[0]={
   name:'Yoyi Sg. Koyan',
   address:'KETUA KAMPONG SG KOYAN 2, 2 KEDAI, FELDA SG. KOYAN 2, SG KOYAN, 27650 RAUB, PAHANG',
   image:'WhatsApp%20Image%202026-10-11%20at%2016.09.53%20(2).jpeg',
-  map:'https://maps.app.goo.gl/kkghzi6F89aRbkfD8'};
+  map:'https://maps.app.goo.gl/kkghzi6F89aRbkfD8'};data[3]={
+  name:'Yoyi Tersang',
+  address:'3C, GERAI FELDA TERSANG 03, 27600 RAUB, PAHANG',
+  image:'WhatsApp%20Image%202026-10-11%20at%2012.32.56%20(1).jpeg',
+  map:'https://maps.app.goo.gl/giBU1oB2hqqgNqwR8'};
 try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(saved)&&saved.length===19)data=saved;}catch(e){}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function render(){
